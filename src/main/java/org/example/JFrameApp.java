@@ -1,11 +1,7 @@
 package org.example;
 
-import javax.imageio.ImageIO;
 import javax.swing.*;
-import java.awt.*;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
-import java.util.Objects;
 
 public class JFrameApp extends JFrame {
 

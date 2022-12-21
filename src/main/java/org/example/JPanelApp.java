@@ -1,7 +1,8 @@
 package org.example;
 
+import org.example.haffman.HaffmanController;
+
 import javax.swing.*;
-import java.awt.*;
 import java.awt.datatransfer.DataFlavor;
 import java.awt.datatransfer.Transferable;
 import java.awt.event.ActionEvent;
@@ -9,38 +10,28 @@ import java.awt.event.ActionListener;
 import java.io.IOException;
 
 public class JPanelApp extends JPanel {
-
-    ImageIcon imageIcon = new ImageIcon("miet.png");
-    @Override
-    protected void paintComponent(Graphics g) {
-        super.paintComponent(g);
-        g.drawImage(imageIcon.getImage(), 165, 0, null);
-    }
-
     private String pathToTheTile;
 
     public JPanelApp() {
-
-        JLabel jLabel = new JLabel(new ImageIcon("miet.png"));
-        jLabel.setBounds(0,165,600,135);
-        add(jLabel);
         JTextField textField = new JTextField(30);
         textField.setText("Drag your file here");
         JButton checkButton = new JButton("Check");
-        JButton zipButton = new JButton("ZIP");
+        JButton haffmanButton = new JButton("Haffman");
         JButton unpackingButton = new JButton("Unpacking");
-        jLabel.setIcon(imageIcon);
+        JButton rleButton = new JButton("RLE");
 
 
-        zipButton.setBounds(100, 100, 100, 50);
+        haffmanButton.setBounds(100, 100, 100, 50);
         checkButton.setBounds(510, 100, 60, 30);// Устанавливаем размер и положение компонента
         unpackingButton.setBounds(200, 100, 200, 50);
         textField.setBounds(50, 100, 450, 30);
+        rleButton.setBounds(100, 100, 100, 50);
 
         add(textField);
         add(checkButton);// Добавить компоненты
-        add(zipButton);
+        add(haffmanButton);
         add(unpackingButton);
+        add(rleButton);
 
         // Перетащите в файл
         textField.setTransferHandler(new TransferHandler() {
@@ -58,7 +49,6 @@ public class JPanelApp extends JPanel {
                     textField.setText(filepath);
                     pathToTheTile = filepath;
                     textField.setText("Save!");
-
                     return true;
                 } catch (Exception exception) {
                     exception.getMessage();
@@ -89,30 +79,24 @@ public class JPanelApp extends JPanel {
                 textField.setText(lu);
                 pathToTheTile = textField.getText();
                 textField.setText("Save!");
-                boolean b1 = pathToTheTile.endsWith("zip");
             }
 
         });
 
         // Кнопка zip
-        zipButton.addActionListener(new ActionListener() {
+        haffmanButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ZipService zipService = new ZipService();
-
-                if (pathToTheTile != null) {
-                    boolean b1 = false;
-                    try {
-                        b1 = zipService.createZIP(pathToTheTile);
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                HaffmanController controller = new HaffmanController();
+                boolean tg = pathToTheTile.endsWith("txt");
+                try {
+                    if (tg){
+                        textField.setText(controller.archiving(pathToTheTile));
+                    }else {
+                        textField.setText("It's not txt");
                     }
-                    if (b1){
-                        textField.setText("Ready");
-                    }
-                    else {
-                        textField.setText("Error in stage of creating an archive");
-                    }
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
@@ -121,22 +105,17 @@ public class JPanelApp extends JPanel {
         unpackingButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                ZipService zipService = new ZipService();
-                if (pathToTheTile != null & pathToTheTile.endsWith("zip")  ) {
-                    try {
-                        textField.setText(zipService.unpackingZIP(pathToTheTile));
-                    } catch (IOException ex) {
-                        throw new RuntimeException(ex);
+                HaffmanController controller = new HaffmanController();
+                boolean tg = pathToTheTile.endsWith("huf");
+                try {
+                    if (tg){
+                        controller.unzipping(pathToTheTile);
                     }
-                }else {
-                    textField.setText("It is not ZIP");
+                } catch (IOException ex) {
+                    throw new RuntimeException(ex);
                 }
             }
         });
-    }
-
-
-    private class SignalProcess {
     }
 }
 
